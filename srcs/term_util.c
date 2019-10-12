@@ -42,15 +42,17 @@ int		get_pos(int *y, int *x)
 
 	for( i -= 2, pow = 1; buf[i] != ';'; i--, pow *= 10)
 		*x = *x + ( buf[i] - '0' ) * pow;
+	(*x)--;
 
 	for( i-- , pow = 1; buf[i] != '['; i--, pow *= 10)
 		*y = *y + ( buf[i] - '0' ) * pow;
+	(*y)--;
 	return 0;
 }
 
 int		move_to(int new_pos)
 {
-	ft_printf("\e[%d;%dH", new_pos / g_all.term.term_width, new_pos % g_all.term.term_width);
+	ft_printf("\e[%d;%dH", new_pos / g_all.term.term_width + 1, new_pos % g_all.term.term_width + 1);
 	return (0);
 }
 
