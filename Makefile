@@ -19,7 +19,7 @@ HEAD = includes/
 LIB = libft/
 FILE = minishell.h
 H = $(addprefix $(HEAD), $(FILE))
-FILES = main.o
+FILES = error.o     exit.o      main.o      reader.o    term_util.o signal.o command_handler.o
 OBJ = $(addprefix $(SRCS), $(FILES))
 SANITIZE = -fsanitize=address
 

@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hvromman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/11 11:13:34 by hvromman          #+#    #+#             */
-/*   Updated: 2019/10/11 11:13:36 by hvromman         ###   ########.fr       */
+/*   Created: 2019/10/12 11:29:13 by hvromman          #+#    #+#             */
+/*   Updated: 2019/10/12 11:29:15 by hvromman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		error(char *error_msg, char *details)
+void	sig_winch(int c)
 {
-	ft_printf("%s%s\n%>", error_msg, details, 2);
-	return (-1);
+	(void)c;
+	ft_printf("windows resize\n");
 }

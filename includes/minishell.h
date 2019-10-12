@@ -19,6 +19,7 @@
 # include <sys/ioctl.h>
 # include <termios.h>
 # include <fcntl.h>
+# include <limits.h>
 
 # define RESET_COLOR "\e[0m"
 # define HIDE_CURSOR "\e[?25l"
@@ -35,6 +36,8 @@
 # define REALLOC_SIZE 10
 # define PROMPT "$>"
 
+# define SHELL_NAME "minishell"
+
 typedef struct	s_term
 {
 	int		line_start;
@@ -45,15 +48,55 @@ typedef struct	s_term
 	int		new_term_height;
 }				t_term;
 
+typedef struct	s_command
+{
+	pid_t	child_pid;
+	char	*command;
+	char	*arguments;
+	int		nb_args;
+	char	**structured_args;
+}				t_command;
 
 typedef struct	s_a
 {
-	char	*line;
-	int		line_size;
-	char	*command[10];
-	t_term	term;
+	char		**env;
+	char		*line;
+	int			line_size;
+	int			cursor_pos_in_line;
+	t_command	command;
+	t_term		term;
 }				t_a;
 
 t_a				g_all;
 
 #endif
+
+/*
+** command_handler.c
+*/
+int				dispatcher();
+
+/*
+** error.c
+*/
+int				error(char *error_msg, char *details);
+
+/*
+** reader.c
+*/
+int				getch(void);
+int				realloc_line();
+int				append_to_line(char ch, int pos);
+int				deal_with_this(char ch);
+
+/*
+** signal.c
+*/
+void			sig_winch(int c);
+
+/*
+** term_util.c
+*/
+int				get_pos(int *y, int *x);
+int				move_to(int new_pos);
+int				start_line();
