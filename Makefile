@@ -13,14 +13,29 @@
 NAME = minishell
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -O3
+CFLAGS = -Wall -Wextra -Werror
 SRCS = srcs/
 HEAD = includes/
 LIB = libft/
 FILE = minishell.h
 H = $(addprefix $(HEAD), $(FILE))
-FILES = error.o     exit.o      main.o      reader.o    term_util.o signal.o command_handler.o
+
+FILES = error.o exit.o main.o reader.o term_util.o signal.o command_handler.o util.o
 OBJ = $(addprefix $(SRCS), $(FILES))
+
+BUILTIN_DIR = builtin/
+BUILTIN = builtin_dispatcher.o cd_builtin.o echo_builtin.o env_builtin.o \
+exit_builtin.o pwd_builtin.o setenv_builtin.o unsetenv_builtin.o
+OBJ += $(addprefix $(SRCS), $(addprefix $(BUILTIN_DIR), $(BUILTIN)))
+
+ENV_DIR = env/
+ENV = get_env.o set_env.o
+OBJ += $(addprefix $(SRCS), $(addprefix $(ENV_DIR), $(ENV)))
+
+HIST_DIR = history/
+HIST = get_history.o set_history.o
+OBJ += $(addprefix $(SRCS), $(addprefix $(HIST_DIR), $(HIST)))
+
 SANITIZE = -fsanitize=address
 
 RED=\033[0;91m

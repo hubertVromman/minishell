@@ -13,13 +13,30 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+/*
+** my includes
+*/
+
 # include "libft.h"
+# include "prototypes.h"
+
+/*
+** libraries includes
+*/
+
 # include <unistd.h>
 # include <stdlib.h>
 # include <sys/ioctl.h>
 # include <termios.h>
 # include <fcntl.h>
 # include <limits.h>
+# include <signal.h>
+# include <stdio.h>
+# include <sys/stat.h>
+
+/*
+** defines
+*/
 
 # define RESET_COLOR "\e[0m"
 # define HIDE_CURSOR "\e[?25l"
@@ -34,9 +51,32 @@
 # define HOME_CURSOR "\e[H"
 
 # define REALLOC_SIZE 10
-# define PROMPT "$>"
+# define PROMPT "$> "
 
 # define SHELL_NAME "minishell"
+# define MERROR -2
+
+# define HISTORY_FILE "/Users/hvromman/.minishell_history"
+# define HISTORY_BUFF_SIZE 1000
+# define HISTORY_REALLOC_SIZE 30
+
+/*
+** structures
+*/
+
+typedef struct	s_history
+{
+	int		pos_in_history;
+	int		cursor_pos_in_base;
+	int		base_pos;
+	char	*base;
+	int		read_fd;
+	int		write_fd;
+	int		malloc_size;
+	int		size;
+	char	*file_name;
+	char	**data;
+}				t_history;
 
 typedef struct	s_term
 {
@@ -46,57 +86,36 @@ typedef struct	s_term
 	int		term_height;
 	int		new_term_width;
 	int		new_term_height;
+	int		prompt_size;
 }				t_term;
 
 typedef struct	s_command
 {
-	pid_t	child_pid;
-	char	*command;
-	char	*arguments;
-	int		nb_args;
-	char	**structured_args;
+	pid_t			child_pid;
+	char			*command;
+	char			command_expanded[PATH_MAX];
+	char			*arguments;
+	int				nb_args;
+	char			**structured_args;
+	unsigned char	exit_status;
 }				t_command;
 
 typedef struct	s_a
 {
+	int			signal_sent;
+	int			exit;
+	int			env_len;
 	char		**env;
+	char		**variables;
 	char		*line;
+	char		*current_line;
 	int			line_size;
 	int			cursor_pos_in_line;
 	t_command	command;
+	t_history	history;
 	t_term		term;
 }				t_a;
 
 t_a				g_all;
 
 #endif
-
-/*
-** command_handler.c
-*/
-int				dispatcher();
-
-/*
-** error.c
-*/
-int				error(char *error_msg, char *details);
-
-/*
-** reader.c
-*/
-int				getch(void);
-int				realloc_line();
-int				append_to_line(char ch, int pos);
-int				deal_with_this(char ch);
-
-/*
-** signal.c
-*/
-void			sig_winch(int c);
-
-/*
-** term_util.c
-*/
-int				get_pos(int *y, int *x);
-int				move_to(int new_pos);
-int				start_line();

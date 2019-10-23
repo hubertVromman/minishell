@@ -16,93 +16,70 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+int		search_path()
+{
+	char	*path;
+	int		i;
+	int		ret;
+	int		slash;
+
+	if (!(path = get_env_var("PATH")) || !(path = ft_strdup(path)))
+		return (-1);
+	i = 0;
+	while ((ret = ft_indexof(path + i, ':')) != -1)
+	{
+		slash = 0;
+		ft_memcpy(g_all.command.command_expanded, path + i, ret);
+		if (g_all.command.command_expanded[ret - 1] != '/')
+		{
+			g_all.command.command_expanded[ret] = '/';
+			slash = 1;
+		}
+		ft_memcpy(g_all.command.command_expanded + ret + slash, g_all.command.command, ft_strlen(g_all.command.command) + 1);
+		if (access(g_all.command.command_expanded, F_OK) == 0)
+			return (0);
+		i += ret + 1;
+	}
+	return (-1);
+}
+
 int		command_handler()
 {
-	return (0);
-}
+	int		status;
 
-int		pwd_builtin()
-{
-	char	buf[PATH_MAX];
-
-	if (getcwd(buf, PATH_MAX) == NULL)
+	if (g_all.command.command[0] == '/' || g_all.command.command[0] == '.')
+		ft_memcpy(g_all.command.command_expanded, g_all.command.command, ft_strlen(g_all.command.command));
+	else if (search_path() == -1)
 	{
-		ft_printf("%s\n%>", buf, 2);
-		return (1);
-	}
-	else
-	{
-		ft_printf("%s\n", buf);
-	}
-	return (0);
-}
-
-char	*get_env_var(char *var)
-{
-	int		i;
-
-	i = -1;
-	while (g_all.env[++i])
-	{
-		if (ft_strncmp(var, g_all.env[i], ft_strlen(var)) == 0)
-			return (g_all.env[i] + ft_strlen(var) + 1);
-	}
-	return (NULL);
-}
-
-char	*replace_home(char *arg, int *is_to_free)
-{
-	char	*home_path;
-
-	*is_to_free = 0;
-	if (arg[0] != '~')
-		return (arg);
-	else if (!(home_path = get_env_var("HOME")))
-		return (arg);
-	else
-	{
-		*is_to_free = 1;
-		return (ft_strjoin(home_path, arg + 1));
-	}
-}
-
-int		cd_builtin()
-{
-	char	buf[PATH_MAX];
-	char	*arg;
-	int		is_to_free;
-
-	if (g_all.command.nb_args > 1)
-		return (error("cd: too many arguments", ""));
-	if (getcwd(buf, PATH_MAX) == NULL)
-		return (error(SHELL_NAME ": ", buf));
-	if (g_all.command.nb_args == 0)
-		arg = "~";
-	else
-		arg = g_all.command.structured_args[0];
-	if (!(arg = replace_home(arg, &is_to_free)))
+		error("minishell: command not found: ", g_all.command.command);
+		g_all.command.exit_status = 127;
 		return (-1);
-	if (chdir(arg) == -1)
+	}
+	if (access(g_all.command.command_expanded, X_OK) == -1)
 	{
-		ft_memcpy(buf, arg, ft_strlen(arg) + 1);
-		if (buf[0] != '/')
+		g_all.command.exit_status = 126;
+		error("minishell: permission denied: ", g_all.command.command);
+		return (-1);
+	}
+	else
+	{
+		if ((g_all.command.child_pid = fork()) == -1)
 		{
-			ft_memrcpy(buf + 2, buf, ft_strlen(buf) + 1);
-			buf[0] = '.';
-			buf[1] = '/';
+			ft_printf("fork failed\n");
+			return -1;
 		}
-		if (access(buf, F_OK) == -1)
-			error("cd: no such file or directory: ", arg);
-		else if (access(buf, R_OK) == -1)
-			error("cd: permission denied: ", arg);
+		else if (g_all.command.child_pid == 0)
+		{
+			if (execve(g_all.command.command_expanded, g_all.command.structured_args, g_all.env) == -1)
+		ft_printf("Execution failed\n");
+		}
 		else
-			error("cd: unknow error: ", arg);
-		if (is_to_free)
-			free(arg);
-		return (-1);
+		{
+			waitpid(g_all.command.child_pid, &status, 0);
+			if (!g_all.signal_sent)
+				g_all.command.exit_status = WEXITSTATUS(status);
+		}
 	}
-	if (is_to_free)
-		free(arg);
 	return (0);
 }
 
@@ -131,11 +108,12 @@ int		parse_arguments()
 	int		arg_nb;
 	int		arg_len;
 
-	g_all.command.nb_args = get_nb_args();
+	g_all.command.nb_args = get_nb_args() + 1;
 	if (!(g_all.command.structured_args = malloc(sizeof(*g_all.command.structured_args) * (g_all.command.nb_args + 1))))
-		return (-1);
+		exit_func(MERROR);
 	i = 0;
-	arg_nb = -1;
+	arg_nb = 0;
+	g_all.command.structured_args[0] = g_all.command.command;
 	while (g_all.command.arguments[i])
 	{
 		while (g_all.command.arguments[i] == ' ')
@@ -144,71 +122,89 @@ int		parse_arguments()
 		if ((arg_len = ft_indexof(g_all.command.arguments + i, ' ')) == -1)
 			arg_len = ft_strlen(g_all.command.arguments);
 		if (!(g_all.command.structured_args[arg_nb] = ft_strsub(g_all.command.arguments, i, arg_len)))
-			return (-1);
+			exit_func(MERROR);
 		i += arg_len;
 	}
+	g_all.command.structured_args[arg_nb + 1] = NULL;
 	return (0);
 }
 
-int		builtin_handler()
+char	*replace_dollar(char *line, int dollar_pos, int end)
 {
-	if (ft_strcmp(g_all.command.command, "echo") == 0)
-		;
-	else if (ft_strcmp(g_all.command.command, "cd") == 0)
-		return (cd_builtin());
-	else if (ft_strcmp(g_all.command.command, "setenv") == 0)
-		;
-	else if (ft_strcmp(g_all.command.command, "unsetenv") == 0)
-		;
-	else if (ft_strcmp(g_all.command.command, "env") == 0)
-		;
-	else if (ft_strcmp(g_all.command.command, "exit") == 0)
-		;
-	else if (ft_strcmp(g_all.command.command, "pwd") == 0)
-		return (pwd_builtin());
-	else
-		return (1);
-	return (0);
+	char	*replacement;
+	char	*to_replace;
+	int		final_len;
+	char	*final_line;
+	int		replacement_len;
+
+	if (!(to_replace = ft_strsub(line, dollar_pos, end - dollar_pos)))
+		exit_func(MERROR);
+	if (!(replacement = get_env_var(to_replace + 1)))
+		replacement = "";
+	free(to_replace);
+	replacement_len = ft_strlen(replacement);
+	final_len = dollar_pos + replacement_len + ft_strlen(line) - end;
+	if (!(final_line = malloc(final_len)))
+		exit_func(MERROR);
+	ft_memcpy(final_line, line, dollar_pos);
+	ft_memcpy(final_line + dollar_pos, replacement, replacement_len);
+	ft_memcpy(final_line + dollar_pos + replacement_len, line, ft_strlen(line) - end);
+	return (final_line);
+}
+
+char	*search_dollar(char *line)
+{
+	int		dollar_pos;
+	char	*tmp;
+	int		end;
+
+	end = 0;
+	if ((dollar_pos = ft_indexof(line + end, '$')) != -1)
+	{
+		end = dollar_pos + 1;
+		while (ft_isalnum(line[end]))
+			end++;
+		if (end != dollar_pos + 1)
+		{
+			tmp = replace_dollar(line, dollar_pos, end);
+			end = dollar_pos + 1;
+			free(line);
+			line = tmp;
+		}
+	}
+	return (line);
 }
 
 int		dispatcher()
 {
 	int		ret;
-	int		status;
-	char	*arg[3];
+	int		i;
 
-	g_all.command.command = g_all.line;
-	if ((ret = ft_indexof(g_all.line, ' ')) != -1)
+	add_to_history(g_all.current_line);
+	g_all.current_line = search_dollar(g_all.current_line);
+	i = -1;
+	while (g_all.current_line[++i] == ' ')
+		;
+	g_all.command.command = g_all.current_line + i;
+	if ((ret = ft_indexof(g_all.command.command, ' ')) != -1)
 	{
-		g_all.line[ret] = 0;
-		g_all.command.arguments = g_all.line + ret + 1;
+		g_all.command.command[ret] = 0;
+		g_all.command.arguments = g_all.command.command + ret + 1;
 	}
 	else
 		g_all.command.arguments = "";
 
-	if (parse_arguments() != 0)
+	if (!g_all.command.command[0])
 		return (-1);
 
-	if ((ret = builtin_handler()) != 0)
-		return (ret);
-	else
-		return (command_handler());
-	arg[0] = "ls";
-	arg[1] = "-C";
-	arg[2] = NULL;
+	g_all.command.exit_status = 0;
 
-	if ((g_all.command.child_pid = fork()) == -1)
-	{
-		ft_printf("fork failed\n");
-		return -1;
-	}
-	else if (g_all.command.child_pid == 0)
-	{
-		if (execve("/bin/ls", (char **)arg, g_all.env) == -1)
-			ft_printf("Execution failed\n");
-		return 1;
-	}
+	if (parse_arguments() == -1)
+		return (-1);
+
+	if (builtin_dispatcher() == -1)
+		command_handler();
 	else
-		wait(&status);
-	return 0;
+		return (1);
+	return (0);
 }

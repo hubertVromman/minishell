@@ -1,26 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   unsetenv_builtin.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hvromman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/12 11:29:13 by hvromman          #+#    #+#             */
-/*   Updated: 2019/10/12 11:29:15 by hvromman         ###   ########.fr       */
+/*   Created: 2019/10/14 15:05:06 by hvromman          #+#    #+#             */
+/*   Updated: 2019/10/14 15:05:07 by hvromman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	sig_winch(int c)
+int		unsetenv_builtin()
 {
-	(void)c;
-	ft_printf("windows resize\n");
-}
+	int		i;
+	int		pos;
 
-void	sig_int(int c)
-{
-	(void)c;
-	g_all.signal_sent = 1;
-	g_all.command.exit_status = 1;
+	if (g_all.command.nb_args < 2)
+		return (error("unsetenv: Too few arguments.", ""));
+	i = 0;
+	while (++i < g_all.command.nb_args)
+	{
+		if ((pos = get_env_pos(g_all.command.structured_args[i])) != -1)
+			delete_env_var(pos);
+	}
+	return (0);
 }

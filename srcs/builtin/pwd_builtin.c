@@ -1,26 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   pwd_builtin.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hvromman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/12 11:29:13 by hvromman          #+#    #+#             */
-/*   Updated: 2019/10/12 11:29:15 by hvromman         ###   ########.fr       */
+/*   Created: 2019/10/14 15:00:32 by hvromman          #+#    #+#             */
+/*   Updated: 2019/10/14 15:00:34 by hvromman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	sig_winch(int c)
+int		pwd_builtin()
 {
-	(void)c;
-	ft_printf("windows resize\n");
-}
+	char	buf[PATH_MAX];
 
-void	sig_int(int c)
-{
-	(void)c;
-	g_all.signal_sent = 1;
-	g_all.command.exit_status = 1;
+	if (getcwd(buf, PATH_MAX) == NULL)
+	{
+		ft_printf("%s\n%>", buf, 2);
+		return (1);
+	}
+	else
+	{
+		ft_printf("%s\n", buf);
+	}
+	return (0);
 }

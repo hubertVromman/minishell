@@ -61,11 +61,15 @@ int		start_line()
 	int		x;
 	int		y;
 
-	g_all.line_size = 0;
-	ft_printf("%s", PROMPT);
+	if ((g_all.term.prompt_size = ft_printf("%d %s", g_all.command.exit_status, PROMPT)) == -1)
+		g_all.term.prompt_size = 0;
 	get_pos(&y, &x);
 	g_all.term.line_start = y * g_all.term.term_width + x;
 	g_all.term.cursor_pos = g_all.term.line_start;
 	g_all.cursor_pos_in_line = 0;
+	g_all.history.pos_in_history = g_all.history.size;
+	if (!(g_all.line = ft_strdup("")))
+		exit_func(MERROR);
+	g_all.current_line = g_all.line;
 	return (0);
 }

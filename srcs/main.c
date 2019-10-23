@@ -19,37 +19,48 @@ int		init(char **env)
 	int				res;
 
 	ft_bzero(&g_all, sizeof(g_all));
-	g_all.env = env;
+	// g_all.env = env;
+	init_env(env);
+	init_history();
 	ioctl(0, TIOCGSIZE, &ts);
 	g_all.term.term_width = ts.ts_cols;
 	g_all.term.term_height = ts.ts_lines;
 	res = tcgetattr(0, &org_opts);
-	ft_printf("res %d width %d height %d\n", res, g_all.term.term_width, g_all.term.term_height);
+	// ft_printf("res %d width %d height %d\n", res, g_all.term.term_width, g_all.term.term_height);
 	org_opts.c_lflag = (ISIG | OFDEL | IEXTEN) & ~(ICANON); // not sure for ofdel
 	tcsetattr(0, TCSANOW, &org_opts);
 	signal(SIGWINCH, &sig_winch);
-	start_line();
+	signal(SIGINT, &sig_int);
 	return (0);
 }
 
 int		main(int ac, char **av, char **env)
 {
-	init(env);
 	(void)ac;
 	(void)av;
 	char	ch;
 
-	while ((ch = getch()))
+	init(env);
+	for (int i = 0; i < 5; i++)
 	{
-		deal_with_this(ch);
-		if (ch == '\n')
+		if (start_line() == -1)
+			exit_func(-2);
+		g_all.signal_sent = 0;
+		while ((ch = getch_killable()) != '\n')
 		{
-			move_to(g_all.term.line_start + g_all.line_size);
-			ft_printf("\n", g_all.line);
-			dispatcher();
-			ft_strdel(&g_all.line);
-			start_line();
+			deal_with_this(ch);
 		}
+		move_to(g_all.term.line_start + g_all.line_size);
+		ft_printf("\n");
+		if (g_all.signal_sent)
+		{
+			free_lines();
+			g_all.line_size = 0;
+			continue;
+		}
+		dispatcher();
+		free_lines();
+		g_all.line_size = 0;
 	}
 	return 0;
 }
