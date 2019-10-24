@@ -180,11 +180,12 @@ int		dispatcher()
 	int		ret;
 	int		i;
 
-	add_to_history(g_all.current_line);
-	g_all.current_line = search_dollar(g_all.current_line);
 	i = -1;
 	while (g_all.current_line[++i] == ' ')
 		;
+	if (g_all.current_line[i])
+		add_to_history(g_all.current_line);
+	g_all.current_line = search_dollar(g_all.current_line);
 	g_all.command.command = g_all.current_line + i;
 	if ((ret = ft_indexof(g_all.command.command, ' ')) != -1)
 	{

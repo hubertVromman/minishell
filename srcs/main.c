@@ -59,6 +59,7 @@ int		main(int ac, char **av, char **env)
 			continue;
 		}
 		dispatcher();
+		ft_strdel(&g_all.history.base);
 		free_lines();
 		g_all.line_size = 0;
 	}

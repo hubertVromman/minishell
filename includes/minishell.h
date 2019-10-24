@@ -54,7 +54,9 @@
 # define PROMPT "$> "
 
 # define SHELL_NAME "minishell"
+# define COMMAND_MAX_LEN 1000
 # define MERROR -2
+# define HISTORY_FORMAT_ERROR -3
 
 # define HISTORY_FILE "/Users/hvromman/.minishell_history"
 # define HISTORY_BUFF_SIZE 1000

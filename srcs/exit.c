@@ -16,5 +16,7 @@ int		exit_func(int exit_code)
 {
 	if (exit_code == MERROR)
 		ft_printf("malloc error\n%>", 2);
+	else if (exit_code == HISTORY_FORMAT_ERROR)
+		ft_printf("history read error\n%>", 2);
 	exit(exit_code);
 }

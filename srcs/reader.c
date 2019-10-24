@@ -75,8 +75,6 @@ int		append_to_line(char ch, int pos)
 int		deal_with_this(char ch)
 {
 	int		free_base;
-	// int		x;
-	// int		y;
 
 	free_base = 1;
 	if (ch == 4)
