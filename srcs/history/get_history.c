@@ -14,13 +14,11 @@
 
 char	*get_history(int new_pos)
 {
-	g_all.history.pos_in_history += new_pos;
+	g_all.history.pos_in_history = new_pos;
 	if (g_all.history.pos_in_history < 0)
 		g_all.history.pos_in_history = 0;
 	else if (g_all.history.pos_in_history > g_all.history.size)
 		g_all.history.pos_in_history = g_all.history.size;
-	if (g_all.history.pos_in_history == g_all.history.size)
-		return (g_all.line);
 	return (g_all.history.data[g_all.history.pos_in_history]);
 }
 
@@ -46,15 +44,6 @@ int		get_previous_pos_of(int direction)
 			compare = g_all.line;
 		else
 			compare = g_all.history.data[new_cursor_pos];
-		// ft_printf("--------------------------------------------------------\n%>", g_all.history.write_fd);
-		// ft_printf("line <%s>\n%>", g_all.line, g_all.history.write_fd);
-		// ft_printf("current_line <%s>\n%>", g_all.current_line, g_all.history.write_fd);
-		// ft_printf("base <%s>\n%>", g_all.history.base, g_all.history.write_fd);
-		// ft_printf("compare <%s>\n%>", compare, g_all.history.write_fd);
-		// ft_printf("base_pos <%d>\n%>", g_all.history.base_pos, g_all.history.write_fd);
-		// ft_printf("new_cursor_pos <%d>\n%>", new_cursor_pos, g_all.history.write_fd);
-		// ft_printf("history size <%d>\n%>", g_all.history.size, g_all.history.write_fd);
-		// ft_printf("--------------------------------------------------------\n%>", g_all.history.write_fd);
 		if (ft_strncmp(g_all.history.base, compare, g_all.history.cursor_pos_in_base) == 0
 			&& (ft_strcmp(g_all.history.base, compare) != 0 || g_all.history.base_pos == new_cursor_pos)
 			&& ft_strcmp(g_all.current_line, compare) != 0)
@@ -65,13 +54,13 @@ int		get_previous_pos_of(int direction)
 			if (new_cursor_pos == g_all.history.size)
 				g_all.current_line = g_all.line;
 			else
-				g_all.current_line = ft_strdup(get_history(new_cursor_pos - g_all.history.pos_in_history));
+				g_all.current_line = ft_strdup(get_history(new_cursor_pos));
 			move_to(g_all.term.line_start);
 			ft_printf("%s", g_all.current_line);
 			g_all.line_size = ft_strlen(g_all.current_line);
 			g_all.term.cursor_pos = g_all.term.line_start + g_all.line_size;
 			g_all.cursor_pos_in_line = g_all.line_size;
-			g_all.history.pos_in_history = new_cursor_pos;
+			// g_all.history.pos_in_history = new_cursor_pos;
 			return (0);
 		}
 	}

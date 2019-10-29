@@ -20,6 +20,7 @@ int		init(char **env)
 
 	ft_bzero(&g_all, sizeof(g_all));
 	// g_all.env = env;
+	init_var();
 	init_env(env);
 	init_history();
 	ioctl(0, TIOCGSIZE, &ts);
@@ -52,16 +53,14 @@ int		main(int ac, char **av, char **env)
 		}
 		move_to(g_all.term.line_start + g_all.line_size);
 		ft_printf("\n");
-		if (g_all.signal_sent)
+		if (!g_all.signal_sent)
 		{
-			free_lines();
-			g_all.line_size = 0;
-			continue;
+			append_to_line(0, g_all.line_size);
+			dispatcher();
 		}
-		dispatcher();
-		ft_strdel(&g_all.history.base);
 		free_lines();
 		g_all.line_size = 0;
+		change_or_add_var_int("?", g_all.command.exit_status);
 	}
 	return 0;
 }

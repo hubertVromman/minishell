@@ -36,6 +36,10 @@ HIST_DIR = history/
 HIST = get_history.o set_history.o
 OBJ += $(addprefix $(SRCS), $(addprefix $(HIST_DIR), $(HIST)))
 
+VAR_DIR = var/
+VAR = get_var.o set_var.o
+OBJ += $(addprefix $(SRCS), $(addprefix $(VAR_DIR), $(VAR)))
+
 SANITIZE = -fsanitize=address
 
 RED=\033[0;91m

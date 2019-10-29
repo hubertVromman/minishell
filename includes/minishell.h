@@ -26,13 +26,14 @@
 
 # include <unistd.h>
 # include <stdlib.h>
-# include <sys/ioctl.h>
 # include <termios.h>
 # include <fcntl.h>
 # include <limits.h>
 # include <signal.h>
 # include <stdio.h>
 # include <sys/stat.h>
+# include <sys/wait.h>
+# include <sys/ioctl.h>
 
 /*
 ** defines
@@ -108,7 +109,8 @@ typedef struct	s_a
 	int			exit;
 	int			env_len;
 	char		**env;
-	char		**variables;
+	int			var_len;
+	char		**var;
 	char		*line;
 	char		*current_line;
 	int			line_size;

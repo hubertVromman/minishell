@@ -154,4 +154,28 @@ int			get_previous_pos_of(int direction);
 int			init_history();
 int			add_to_history(char *data);
 
+
+/*
+**             **
+**     var     **
+**             **
+*/
+
+/*
+** get_var.c
+*/
+char		*get_var(char *var);
+int			get_var_pos(char *var);
+int			print_var();
+
+/*
+** set_var.c
+*/
+int			delete_var(int pos);
+int			modify_var(int pos, char *name, char *value);
+int			add_var(char *name, char *value);
+int			change_or_add_var(char *name, char *value);
+int			change_or_add_var_int(char *name, int value);
+int			init_var();
+
 #endif

@@ -61,7 +61,7 @@ int		start_line()
 	int		x;
 	int		y;
 
-	if ((g_all.term.prompt_size = ft_printf("%d %s", g_all.command.exit_status, PROMPT)) == -1)
+	if ((g_all.term.prompt_size = ft_printf("%s %s", get_var("?"), PROMPT)) == -1)
 		g_all.term.prompt_size = 0;
 	get_pos(&y, &x);
 	g_all.term.line_start = y * g_all.term.term_width + x;

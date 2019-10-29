@@ -85,5 +85,6 @@ int		free_lines()
 		ft_strdel(&g_all.line);
 		ft_strdel(&g_all.current_line);
 	}
+	ft_strdel(&g_all.history.base);
 	return (0);
 }

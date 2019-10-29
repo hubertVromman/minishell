@@ -12,10 +12,6 @@
 
 #include "minishell.h"
 
-/* Includes necessaires pour la fonction wait() */
-#include <sys/types.h>
-#include <sys/wait.h>
-
 int		search_path()
 {
 	char	*path;
@@ -120,7 +116,7 @@ int		parse_arguments()
 			i++;
 		arg_nb++;
 		if ((arg_len = ft_indexof(g_all.command.arguments + i, ' ')) == -1)
-			arg_len = ft_strlen(g_all.command.arguments);
+			arg_len = ft_strlen(g_all.command.arguments) - i;
 		if (!(g_all.command.structured_args[arg_nb] = ft_strsub(g_all.command.arguments, i, arg_len)))
 			exit_func(MERROR);
 		i += arg_len;
