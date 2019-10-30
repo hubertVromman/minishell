@@ -113,6 +113,9 @@ typedef struct	s_a
 	char		**var;
 	char		*line;
 	char		*current_line;
+	int			pos_in_command;
+	char		*current_command_line;
+	int			line_malloc_size;
 	int			line_size;
 	int			cursor_pos_in_line;
 	t_command	command;

@@ -14,24 +14,25 @@
 
 int		get_pos(int *y, int *x)
 {
-	char buf[30]={0};
-	int ret, i, pow;
+	char buf[30];
+	int ret;
+	int i;
+	int pow;
 	char ch;
 
-	*y = 0; *x = 0;
-
+	buf[0] = 0;
+	*y = 0;
+	*x = 0;
 	write(1, "\e[6n", 4);
-
+	ch = 0;
 	for( i = 0, ch = 0; ch != 'R'; i++ )
 	{
 		ret = read(0, &ch, 1);
 		if ( !ret )
 		{
-			// fprintf(stderr, "getpos: error reading response!\n");
 			return 1;
 		}
 		buf[i] = ch;
-		// ft_printf("buf[%d]: \t%c \t%d\n", i, ch, ch);
 	}
 
 	if (i < 2)
@@ -68,7 +69,8 @@ int		start_line()
 	g_all.term.cursor_pos = g_all.term.line_start;
 	g_all.cursor_pos_in_line = 0;
 	g_all.history.pos_in_history = g_all.history.size;
-	if (!(g_all.line = ft_strdup("")))
+	g_all.line_malloc_size = REALLOC_SIZE;
+	if (!(g_all.line = ft_strnew(REALLOC_SIZE)))
 		exit_func(MERROR);
 	g_all.current_line = g_all.line;
 	return (0);

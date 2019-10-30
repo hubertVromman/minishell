@@ -59,14 +59,17 @@ int		realloc_line()
 		g_all.current_line[g_all.line_size] = 0;
 		free(tmp);
 	}
+	g_all.line_malloc_size = g_all.line_size + REALLOC_SIZE;
 	return (0);
 }
 
 int		append_to_line(char ch, int pos)
 {
 	++g_all.line_size;
-	if (g_all.line_size % REALLOC_SIZE == 0)
+	if (g_all.line_malloc_size + 1 == g_all.line_size)
+	{
 		realloc_line();
+	}
 	ft_memrcpy(g_all.current_line + pos + 1, g_all.current_line + pos, g_all.line_size - pos + 1);
 	g_all.current_line[pos] = ch;
 	return (0);
@@ -82,7 +85,7 @@ int		deal_with_this(char ch)
 		if (!g_all.line_size)
 		{
 			ft_printf("\n");
-			exit(0);
+			exit_no_error(g_all.command.exit_status);
 		}
 		ft_strdel(&g_all.history.base);
 	}

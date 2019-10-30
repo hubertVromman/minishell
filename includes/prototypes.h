@@ -33,6 +33,7 @@ int			error(char *error_msg, char *details);
 ** exit.c
 */
 int			exit_func(int exit_code);
+int			exit_no_error(int exit_code);
 
 /*
 ** reader.c
