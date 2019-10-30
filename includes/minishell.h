@@ -50,6 +50,7 @@
 # define SAVE_SCREEN "\e[?1049h"
 # define RESTORE_SCREEN "\e[?1049l"
 # define HOME_CURSOR "\e[H"
+# define MOVE_TO "\e[%d;%dH"
 
 # define REALLOC_SIZE 10
 # define PROMPT "$> "

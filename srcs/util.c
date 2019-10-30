@@ -28,6 +28,12 @@ void	*realloc_buffer(void *prev_buf, int prev_size, int new_size)
 	return (tmp);
 }
 
+int		friint(void *ptr)
+{
+	free(ptr);
+	return (0);
+}
+
 char	*read_full_file(int fd)
 {
 	char	*buf;
@@ -40,21 +46,19 @@ char	*read_full_file(int fd)
 	real_size = 0;
 	while ((long)modifier * HISTORY_BUFF_SIZE < INT_MAX / 2)
 	{
-		buf = realloc_buffer(buf, g_all.history.malloc_size, g_all.history.malloc_size + modifier * HISTORY_BUFF_SIZE);
-		ret = read(fd, buf + g_all.history.malloc_size, modifier * HISTORY_BUFF_SIZE);
-		if (ret == -1)
-		{
-			free(buf);
+		buf = realloc_buffer(buf, g_all.history.malloc_size,
+			g_all.history.malloc_size + modifier * HISTORY_BUFF_SIZE);
+		if ((ret = read(fd, buf + g_all.history.malloc_size,
+			modifier * HISTORY_BUFF_SIZE)) == 0)
+			break ;
+		else if (ret == -1 && !friint(buf))
 			return (NULL);
-		}
-		else if (ret == 0)
-			break;
 		real_size += ret;
 		g_all.history.malloc_size += modifier * HISTORY_BUFF_SIZE;
 		modifier *= 2;
 	}
-	if (real_size == g_all.history.malloc_size)
-		buf = realloc_buffer(buf, g_all.history.malloc_size, g_all.history.malloc_size + 1);
+	real_size == g_all.history.malloc_size && (buf = realloc_buffer(buf,
+		g_all.history.malloc_size, g_all.history.malloc_size + 1));
 	buf[real_size] = 0;
 	return (buf);
 }
@@ -75,10 +79,9 @@ char	*get_dir(char *path)
 	return (dir_name);
 }
 
-int		free_lines()
+int		free_lines(void)
 {
 	if (g_all.line == g_all.current_line)
-
 		ft_strdel(&g_all.line);
 	else
 	{

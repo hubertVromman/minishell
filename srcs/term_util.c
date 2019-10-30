@@ -12,57 +12,69 @@
 
 #include "minishell.h"
 
+int		get_pos_reader(char *buf, int *x, int *y, int i)
+{
+	int		pow;
+
+	i -= 2;
+	pow = 1;
+	while (buf[i] != ';')
+	{
+		*x = *x + (buf[i] - '0') * pow;
+		i--;
+		pow *= 10;
+	}
+	(*x)--;
+	i--;
+	pow = 1;
+	while (buf[i] != '[')
+	{
+		*y = *y + (buf[i] - '0') * pow;
+		i--;
+		pow *= 10;
+	}
+	(*y)--;
+	return (0);
+}
+
 int		get_pos(int *y, int *x)
 {
-	char buf[30];
-	int ret;
-	int i;
-	int pow;
-	char ch;
+	char	buf[30];
+	int		i;
+	char	ch;
 
 	buf[0] = 0;
 	*y = 0;
 	*x = 0;
 	write(1, "\e[6n", 4);
 	ch = 0;
-	for( i = 0, ch = 0; ch != 'R'; i++ )
+	i = 0;
+	while (ch != 'R')
 	{
-		ret = read(0, &ch, 1);
-		if ( !ret )
-		{
-			return 1;
-		}
-		buf[i] = ch;
+		if (!read(0, buf + i, 1))
+			return (1);
+		ch = buf[i];
+		i++;
 	}
-
 	if (i < 2)
-	{
-		ft_printf("i < 2\n");
-		return(1);
-	}
-
-	for( i -= 2, pow = 1; buf[i] != ';'; i--, pow *= 10)
-		*x = *x + ( buf[i] - '0' ) * pow;
-	(*x)--;
-
-	for( i-- , pow = 1; buf[i] != '['; i--, pow *= 10)
-		*y = *y + ( buf[i] - '0' ) * pow;
-	(*y)--;
-	return 0;
+		return (1);
+	return (get_pos_reader(buf, x, y, i));
 }
 
 int		move_to(int new_pos)
 {
-	ft_printf("\e[%d;%dH", new_pos / g_all.term.term_width + 1, new_pos % g_all.term.term_width + 1);
+	ft_printf(MOVE_TO, new_pos / g_all.term.term_width + 1,
+		new_pos % g_all.term.term_width + 1);
 	return (0);
 }
 
-int		start_line()
+int		start_line(void)
 {
 	int		x;
 	int		y;
 
-	if ((g_all.term.prompt_size = ft_printf("%s %s", get_var("?"), PROMPT)) == -1)
+	if ((g_all.term.prompt_size =
+		ft_printf("%s %s", get_var("?"), PROMPT)) == -1)
 		g_all.term.prompt_size = 0;
 	get_pos(&y, &x);
 	g_all.term.line_start = y * g_all.term.term_width + x;
