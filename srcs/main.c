@@ -33,32 +33,32 @@ int		init(char **env)
 	return (0);
 }
 
-int		main(int ac, char **av, char **env)
+int		main(int ac, char **av)//, char **env)
 {
-	char	ch;
+	// char	ch;
 
 	(void)ac;
 	(void)av;
-	init(env);
-	ft_printf("%s\n", NULL);
-	while (1)
-	{
-		if (start_line() == -1)
-			exit_func(-2);
-		g_all.signal_sent = 0;
-		while ((ch = getch_killable()) != '\n')
-			deal_with_this(ch);
-		move_to(g_all.term.line_start + g_all.line_size) || ft_printf("\n");
-		if (!g_all.signal_sent)
-		{
-			append_to_line(0, g_all.line_size);
-			if (!(g_all.current_command_line = ft_strdup(g_all.current_line)))
-				exit_func(MERROR);
-			g_all.pos_in_command = 0;
-			parser();
-		}
-		g_all.line_size = 0 || free_lines();
-		change_or_add_var_int("?", g_all.command.exit_status);
-	}
+	// init(env);
+	ft_printf("dc %%\n", 5);
+	// while (1)
+	// {
+	// 	if (start_line() == -1)
+	// 		exit_func(-2);
+	// 	g_all.signal_sent = 0;
+	// 	while ((ch = getch_killable()) != '\n')
+	// 		deal_with_this(ch);
+	// 	move_to(g_all.term.line_start + g_all.line_size) || ft_printf("\n");
+	// 	if (!g_all.signal_sent)
+	// 	{
+	// 		append_to_line(0, g_all.line_size);
+	// 		if (!(g_all.current_command_line = ft_strdup(g_all.current_line)))
+	// 			exit_func(MERROR);
+	// 		g_all.pos_in_command = 0;
+	// 		parser();
+	// 	}
+	// 	g_all.line_size = 0 || free_lines();
+	// 	change_or_add_var_int("?", g_all.command.exit_status);
+	// }
 	return (0);
 }

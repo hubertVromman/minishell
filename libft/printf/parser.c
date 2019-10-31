@@ -72,7 +72,6 @@ int		parser(va_list ap, char **fm)
 	int		w[2];
 	int		ret;
 
-	ft_putstr("ici\n");
 	if (start(&f, w, fm, ap))
 		return (-1);
 	while (**fm)
