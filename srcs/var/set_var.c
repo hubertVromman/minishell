@@ -77,14 +77,3 @@ int		change_or_add_var_int(char *name, int value)
 	free(tmp);
 	return (0);
 }
-
-int		init_var()
-{
-	g_all.var_len = 1 + 1;
-	if (!(g_all.var = ft_memalloc(sizeof(*g_all.var) * (g_all.var_len))))
-		exit_func(MERROR);
-	if (!(g_all.var[0] = ft_strdup("?=0")))
-		exit_func(MERROR);
-	g_all.var[1] = NULL;
-	return (0);
-}

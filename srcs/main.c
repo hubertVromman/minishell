@@ -40,6 +40,7 @@ int		main(int ac, char **av, char **env)
 	(void)ac;
 	(void)av;
 	init(env);
+	ft_printf("%s\n", NULL);
 	while (1)
 	{
 		if (start_line() == -1)
@@ -54,7 +55,7 @@ int		main(int ac, char **av, char **env)
 			if (!(g_all.current_command_line = ft_strdup(g_all.current_line)))
 				exit_func(MERROR);
 			g_all.pos_in_command = 0;
-			dispatcher();
+			parser();
 		}
 		g_all.line_size = 0 || free_lines();
 		change_or_add_var_int("?", g_all.command.exit_status);

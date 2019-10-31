@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int		free_all()
+int		free_all(void)
 {
 	ft_free_tab((void***)&g_all.env);
 	ft_free_tab((void***)&g_all.var);

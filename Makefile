@@ -20,7 +20,8 @@ LIB = libft/
 FILE = minishell.h
 H = $(addprefix $(HEAD), $(FILE))
 
-FILES = error.o exit.o main.o reader.o term_util.o signal.o command_handler.o util.o
+FILES = argument_parser.o parser.o dollar_parser.o error.o exit.o main.o \
+reader.o term_util.o signal.o command_handler.o util.o
 OBJ = $(addprefix $(SRCS), $(FILES))
 
 BUILTIN_DIR = builtin/
@@ -33,11 +34,11 @@ ENV = get_env.o set_env.o
 OBJ += $(addprefix $(SRCS), $(addprefix $(ENV_DIR), $(ENV)))
 
 HIST_DIR = history/
-HIST = get_history.o set_history.o
+HIST = get_history.o history_reader.o set_history.o
 OBJ += $(addprefix $(SRCS), $(addprefix $(HIST_DIR), $(HIST)))
 
 VAR_DIR = var/
-VAR = get_var.o set_var.o
+VAR = get_var.o init_var.o set_var.o
 OBJ += $(addprefix $(SRCS), $(addprefix $(VAR_DIR), $(VAR)))
 
 SANITIZE = -fsanitize=address

@@ -22,7 +22,22 @@
 /*
 ** command_handler.c
 */
-int			dispatcher();
+int		command_handler();
+
+/*
+** parser.c
+*/
+int			parser();
+
+/*
+** argument_parser.c
+*/
+int		parse_arguments(void);
+
+/*
+** dollar_parser.c
+*/
+char	*search_dollar(char *line);
 
 /*
 ** error.c
@@ -148,6 +163,11 @@ int			modify_env_var(int pos, char *name, char *value);
 */
 char		*get_history(int new_pos);
 int			get_previous_pos_of(int direction);
+
+/*
+** history_reader.c
+*/
+int			read_all_history_file();
 
 /*
 ** set_history.c

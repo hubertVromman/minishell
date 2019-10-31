@@ -12,92 +12,11 @@
 
 #include "minishell.h"
 
-int		get_line_size(char *file_content, int size)
-{
-	while (file_content[size] != '\n' && file_content[size])
-		size++;
-	if (size && file_content[size] == '\\')
-		return (get_line_size(file_content + size + 1, size));
-	return (size);
-}
-
-int		get_history_size(char *file_content)
-{
-	int		size;
-	int		reader;
-	int		ret;
-
-	size = 0;
-	reader = 0;
-	while ((ret = get_line_size(file_content + reader, 0)))
-	{
-		reader += ret + 1;
-		size++;
-	}
-	return (size);
-}
-
-char	*get_line(char *file_content, int *line_size)
-{
-	int		offset;
-
-	*line_size = get_line_size(file_content, 0);
-	offset = 0;
-	while (file_content[offset] != ';' && file_content[offset])
-		offset++;
-	if (file_content[offset])
-		offset++;
-	if (file_content[offset] == ' ')
-		offset++;
-	if (!file_content[offset])
-		return (NULL);
-	return (ft_strsub(file_content, offset, *line_size - offset));
-}
-
-char	**parse_history_file(char *file_content)
-{
-	char	**data;
-	int		history_size;
-	int		line_count;
-	int		line_size;
-	int		reader;
-
-	history_size = get_history_size(file_content);
-	if (!(data = malloc((history_size + 1) * sizeof(char*))))
-		return (NULL);
-	line_count = -1;
-	reader = 0;
-	while (++line_count < history_size)
-	{
-		if (!(data[line_count] = get_line(file_content + reader, &line_size)))
-		{
-			ft_free_tab((void***)&data);
-			return (NULL);
-		}
-		reader += line_size + 1;
-	}
-	data[line_count] = NULL;
-	return (data);
-}
-
-int		read_all_history_file()
-{
-	char	*file_content;
-
-	file_content = read_full_file(g_all.history.read_fd);
-	// ft_printf("%s\n", file_content);
-	if (!(g_all.history.data = parse_history_file(file_content)))
-		exit_func(HISTORY_FORMAT_ERROR);
-	g_all.history.size = ft_tablen((void**)g_all.history.data);
-	g_all.history.malloc_size = g_all.history.size;
-	free(file_content);
-	return (0);
-}
-
-int		init_history()
+int		init_history(void)
 {
 	g_all.history.file_name = HISTORY_FILE;
-	g_all.history.write_fd = open(g_all.history.file_name, O_CREAT | O_APPEND | O_WRONLY, 0600);
+	g_all.history.write_fd = open(g_all.history.file_name,
+		O_CREAT | O_APPEND | O_WRONLY, 0600);
 	if ((g_all.history.read_fd = open(g_all.history.file_name, O_RDONLY)) != -1)
 		read_all_history_file();
 	return (0);
@@ -105,11 +24,11 @@ int		init_history()
 
 int		add_to_history(char *data)
 {
-	//search for update (other other shells that write history file)
 	if (g_all.history.size == g_all.history.malloc_size)
 	{
 		g_all.history.malloc_size += HISTORY_REALLOC_SIZE;
-		g_all.history.data = realloc_buffer(g_all.history.data, g_all.history.size * sizeof(char*), g_all.history.malloc_size * sizeof(char*));
+		g_all.history.data = realloc_buffer(g_all.history.data, sizeof(char*)
+			* g_all.history.size, sizeof(char*) * g_all.history.malloc_size);
 	}
 	if (!(g_all.history.data[g_all.history.size] = ft_strdup(data)))
 		exit_func(MERROR);

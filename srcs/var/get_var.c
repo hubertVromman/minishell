@@ -38,7 +38,7 @@ int		get_var_pos(char *var)
 	return (-1);
 }
 
-int		print_var()
+int		print_var(void)
 {
 	int		i;
 
