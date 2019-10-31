@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int		pwd_builtin()
+int		pwd_builtin(void)
 {
 	char	buf[PATH_MAX];
 

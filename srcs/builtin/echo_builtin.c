@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int		echo_builtin()
+int		echo_builtin(void)
 {
 	int		i;
 

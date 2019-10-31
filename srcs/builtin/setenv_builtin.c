@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int		setenv_builtin()
+int		setenv_builtin(void)
 {
 	int		pos;
 	char	*value;

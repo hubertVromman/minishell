@@ -50,7 +50,6 @@ int		init_env(char **env)
 
 	if (env == NULL)
 	{
-		// gestion d'erreur
 		return (0);
 	}
 	g_all.env_len = ft_tablen((void**)env);

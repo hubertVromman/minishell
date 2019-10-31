@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int		unsetenv_builtin()
+int		unsetenv_builtin(void)
 {
 	int		i;
 	int		pos;

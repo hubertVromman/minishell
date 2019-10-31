@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "minishell.h"
+#include "minishell.h"
 
-int		builtin_dispatcher()
+int		builtin_dispatcher(void)
 {
 	if (ft_strcmp(g_all.command.command, "echo") == 0)
 		echo_builtin();
@@ -26,8 +26,6 @@ int		builtin_dispatcher()
 		env_builtin();
 	else if (ft_strcmp(g_all.command.command, "exit") == 0)
 		exit_builtin();
-	// else if (ft_strcmp(g_all.command.command, "pwd") == 0)
-	// 	pwd_builtin();
 	else
 		return (-1);
 	return (0);

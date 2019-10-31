@@ -28,7 +28,27 @@ char	*replace_home(char *arg, int *is_to_free)
 	}
 }
 
-int		cd_builtin()
+int		get_error(char *buf, char *arg, int is_to_free)
+{
+	ft_memcpy(buf, arg, ft_strlen(arg) + 1);
+	if (buf[0] != '/')
+	{
+		ft_memrcpy(buf + 2, buf, ft_strlen(buf) + 1);
+		buf[0] = '.';
+		buf[1] = '/';
+	}
+	if (access(buf, F_OK) == -1)
+		error("cd: no such file or directory: ", arg);
+	else if (access(buf, R_OK) == -1)
+		error("cd: permission denied: ", arg);
+	else
+		error("cd: unknow error: ", arg);
+	if (is_to_free)
+		free(arg);
+	return (-1);
+}
+
+int		cd_builtin(void)
 {
 	char	buf[PATH_MAX];
 	char	*arg;
@@ -45,24 +65,7 @@ int		cd_builtin()
 	if (!(arg = replace_home(arg, &is_to_free)))
 		return (-1);
 	if (chdir(arg) == -1)
-	{
-		ft_memcpy(buf, arg, ft_strlen(arg) + 1);
-		if (buf[0] != '/')
-		{
-			ft_memrcpy(buf + 2, buf, ft_strlen(buf) + 1);
-			buf[0] = '.';
-			buf[1] = '/';
-		}
-		if (access(buf, F_OK) == -1)
-			error("cd: no such file or directory: ", arg);
-		else if (access(buf, R_OK) == -1)
-			error("cd: permission denied: ", arg);
-		else
-			error("cd: unknow error: ", arg);
-		if (is_to_free)
-			free(arg);
-		return (-1);
-	}
+		return (get_error(buf, arg, is_to_free));
 	if (is_to_free)
 		free(arg);
 	return (0);

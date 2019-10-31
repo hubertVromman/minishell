@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int		env_builtin()
+int		env_builtin(void)
 {
 	if (g_all.command.nb_args == 1)
 		print_env();

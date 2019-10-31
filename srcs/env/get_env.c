@@ -38,7 +38,7 @@ int		get_env_pos(char *var)
 	return (-1);
 }
 
-int		print_env()
+int		print_env(void)
 {
 	int		i;
 

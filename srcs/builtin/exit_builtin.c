@@ -36,36 +36,30 @@ int		ft_atol_modified(char *str, long *nbr)
 	return (i);
 }
 
-int		exit_builtin()
+int		exit_builtin(void)
 {
 	long	exit_status;
 	int		pos;
 	int		nb_digits;
 	char	*str;
-	int		len_error;
 
 	if (g_all.command.nb_args > 2)
-		error("exit:", " too many arguments");
-	else if (g_all.command.nb_args == 2)
-	{
-		str = g_all.command.structured_args[1];
-		nb_digits = ft_atol_modified(str, &exit_status);
-		pos = nb_digits;
-		while (ft_isdigit(str[pos++]))
-			len_error = 1;
-		pos--;
-		if (len_error)
-			ft_printf("minishell: number truncated after %d digits: %s\n%>",
-				nb_digits, str, 2);
-		if (str[pos])
-		{
-			ft_printf("minishell: bad math expression: `%s'\n%>", str + pos, 2);
-			exit_status = 0;
-		}
-		exit_no_error(exit_status);
-	}
-	else
+		return (error("exit:", " too many arguments"));
+	else if (g_all.command.nb_args == 1)
 		exit_no_error(0);
-	return (0);
+	str = g_all.command.structured_args[1];
+	nb_digits = ft_atol_modified(str, &exit_status);
+	pos = nb_digits;
+	while (ft_isdigit(str[pos++]))
+		;
+	pos--;
+	if (pos != nb_digits)
+		ft_printf("minishell: number truncated after %d digits: %s\n%>",
+			nb_digits, str, 2);
+	if (str[pos])
+	{
+		ft_printf("minishell: bad math expression: `%s'\n%>", str + pos, 2);
+		exit_status = 0;
+	}
+	return (exit_no_error(exit_status));
 }
-
