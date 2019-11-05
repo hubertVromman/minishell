@@ -44,7 +44,8 @@ int		parse_arguments(void)
 		exit_func(MERROR);
 	i = 0;
 	arg_nb = 0;
-	g_all.command.structured_args[0] = g_all.command.command;
+	if (!(g_all.command.structured_args[0] = ft_strdup(g_all.command.command)))
+		exit_func(MERROR);
 	while (g_all.command.arguments[i])
 	{
 		arg_nb++;

@@ -55,6 +55,5 @@ char	*search_dollar(char *line)
 			line = tmp;
 		}
 	}
-	g_all.line_size = ft_strlen(line);
 	return (line);
 }

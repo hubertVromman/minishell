@@ -17,6 +17,7 @@ int		end_dispatcher(int coma_pos)
 	int		real_coma_pos;
 
 	ft_free_tab((void***)&(g_all.command.structured_args));
+	free(g_all.current_command_line);
 	if (coma_pos != -1)
 	{
 		real_coma_pos = ft_indexof(g_all.current_line + g_all.pos_in_command, ';');
