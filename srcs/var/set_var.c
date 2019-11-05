@@ -20,7 +20,8 @@ int		delete_var(int pos)
 	return (0);
 }
 
-int		modify_var(int pos, char *name, char *value)
+int		modify_var(int pos, char *name,
+char *value)
 {
 	free(g_all.var[pos]);
 	if (ft_printf("%s=%s%#>", name, value, &g_all.var[pos]) == -1)

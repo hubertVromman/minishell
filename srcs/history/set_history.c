@@ -24,7 +24,7 @@ int		init_history(void)
 
 int		add_to_history(char *data)
 {
-	if (g_all.history.size == g_all.history.malloc_size)
+	if (g_all.history.size >= g_all.history.malloc_size - 1)
 	{
 		g_all.history.malloc_size += HISTORY_REALLOC_SIZE;
 		g_all.history.data = realloc_buffer(g_all.history.data, sizeof(char*)
@@ -32,6 +32,7 @@ int		add_to_history(char *data)
 	}
 	if (!(g_all.history.data[g_all.history.size] = ft_strdup(data)))
 		exit_func(MERROR);
+	g_all.history.data[g_all.history.size + 1] = NULL;
 	g_all.history.size++;
 	ft_printf("%d; %s\n%>", g_all.history.size, data, g_all.history.write_fd);
 	return (0);

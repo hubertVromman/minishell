@@ -69,7 +69,7 @@ int		command_handler(void)
 {
 	if (g_all.command.command[0] == '/' || g_all.command.command[0] == '.')
 		ft_memcpy(g_all.command.command_expanded, g_all.command.command,
-			ft_strlen(g_all.command.command));
+			ft_strlen(g_all.command.command) + 1);
 	else if (search_path() == -1)
 	{
 		error("minishell: command not found: ", g_all.command.command);
@@ -79,7 +79,7 @@ int		command_handler(void)
 	if (access(g_all.command.command_expanded, X_OK) == -1)
 	{
 		g_all.command.exit_status = 126;
-		error("minishell: permission denied: ", g_all.command.command);
+		error("minishell: permission denied: ", g_all.command.command_expanded);
 		return (-1);
 	}
 	else

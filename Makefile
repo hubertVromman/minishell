@@ -20,8 +20,8 @@ LIB = libft/
 FILE = minishell.h
 H = $(addprefix $(HEAD), $(FILE))
 
-FILES = argument_parser.o parser.o dollar_parser.o error.o exit.o main.o \
-reader.o term_util.o signal.o command_handler.o util.o
+FILES = argument_parser.o line_parser.o dollar_parser.o error.o exit.o main.o \
+reader.o term_util.o signal.o command_handler.o util.o char_action.o
 OBJ = $(addprefix $(SRCS), $(FILES))
 
 BUILTIN_DIR = builtin/
