@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int		search_path(void)
+static int	search_path(void)
 {
 	char	*path;
 	int		i;
@@ -41,7 +41,7 @@ int		search_path(void)
 	return (-1);
 }
 
-int		fork_creation(void)
+static int	fork_creation(void)
 {
 	int		status;
 
@@ -65,7 +65,7 @@ int		fork_creation(void)
 	return (0);
 }
 
-int		command_handler(void)
+int			command_handler(void)
 {
 	if (g_all.command.command[0] == '/' || g_all.command.command[0] == '.')
 		ft_memcpy(g_all.command.command_expanded, g_all.command.command,

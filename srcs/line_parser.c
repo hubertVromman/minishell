@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int		end_dispatcher(int coma_pos)
+static int	end_dispatcher(int coma_pos)
 {
 	int		real_coma_pos;
 
@@ -20,7 +20,8 @@ int		end_dispatcher(int coma_pos)
 	free(g_all.current_command_line);
 	if (coma_pos != -1)
 	{
-		real_coma_pos = ft_indexof(g_all.current_line + g_all.pos_in_command, ';');
+		real_coma_pos =
+			ft_indexof(g_all.current_line + g_all.pos_in_command, ';');
 		g_all.pos_in_command += real_coma_pos + 1;
 		if (!(g_all.current_command_line =
 			ft_strdup(g_all.current_line + g_all.pos_in_command)))
@@ -30,7 +31,7 @@ int		end_dispatcher(int coma_pos)
 	return (0);
 }
 
-int		line_parser(void)
+int			line_parser(void)
 {
 	int		ret;
 	int		i;

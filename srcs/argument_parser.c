@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int		get_nb_args(void)
+static int	get_nb_args(void)
 {
 	int		i;
 	int		nb_args;
@@ -32,25 +32,19 @@ int		get_nb_args(void)
 	return (nb_args);
 }
 
-int		parse_arguments(void)
+static int	get_arguments(void)
 {
 	int		i;
 	int		arg_nb;
 	int		arg_len;
 
-	g_all.command.nb_args = get_nb_args() + 1;
-	if (!(g_all.command.structured_args =
-		malloc(sizeof(char*) * (g_all.command.nb_args + 1))))
-		exit_func(MERROR);
 	i = 0;
 	arg_nb = 0;
-	if (!(g_all.command.structured_args[0] = ft_strdup(g_all.command.command)))
-		exit_func(MERROR);
 	while (g_all.command.arguments[i])
 	{
 		arg_nb++;
 		if (arg_nb == g_all.command.nb_args)
-			break;
+			break ;
 		while (g_all.command.arguments[i] == ' ')
 			i++;
 		if ((arg_len = ft_indexof(g_all.command.arguments + i, ' ')) == -1)
@@ -60,6 +54,18 @@ int		parse_arguments(void)
 			exit_func(MERROR);
 		i += arg_len;
 	}
+	return (0);
+}
+
+int			parse_arguments(void)
+{
+	g_all.command.nb_args = get_nb_args() + 1;
+	if (!(g_all.command.structured_args =
+		malloc(sizeof(char*) * (g_all.command.nb_args + 1))))
+		exit_func(MERROR);
+	if (!(g_all.command.structured_args[0] = ft_strdup(g_all.command.command)))
+		exit_func(MERROR);
+	get_arguments();
 	g_all.command.structured_args[g_all.command.nb_args] = NULL;
 	return (0);
 }

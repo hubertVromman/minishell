@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int		init(char **env)
+static int	init(char **env)
 {
 	struct termios	org_opts;
 	struct ttysize	ts;
@@ -33,7 +33,7 @@ int		init(char **env)
 	return (0);
 }
 
-int		main(int ac, char **av, char **env)
+int			main(int ac, char **av, char **env)
 {
 	char	ch;
 
@@ -53,8 +53,7 @@ int		main(int ac, char **av, char **env)
 			append_to_line(0, g_all.line_size);
 			if (!(g_all.current_command_line = ft_strdup(g_all.current_line)))
 				exit_func(MERROR);
-			g_all.pos_in_command = 0;
-			add_to_history(g_all.current_line);
+			g_all.pos_in_command = 0 || add_to_history(g_all.current_line);
 			line_parser();
 		}
 		g_all.line_size = 0 || free_lines();
